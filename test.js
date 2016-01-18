@@ -26,9 +26,8 @@ casper.test.begin('Todo app authentication', 6, function suite(test) {
       test.assertTextExists('Invalid email address', 'prevents login of unrecognized user');
   });
 
-  function registerCallback(user){
+  function makeRegisterCallback(user){
     return function(){
-      // User that should not exist yet
       this.fill(registerFormSelector, {
         fl_name: user.fl_name,
         email: user.email,
@@ -42,7 +41,7 @@ casper.test.begin('Todo app authentication', 6, function suite(test) {
     test.assertExists(registerFormSelector, "registration form is found");
   });
 
-  casper.thenOpen(base_url, registerCallback(users[0]));
+  casper.thenOpen(base_url, makeRegisterCallback(users[0]));
 
   casper.then(function(){
     test.assertUrlMatch('/dashboard/', 'user goes to dashboard after registration');
@@ -53,9 +52,9 @@ casper.test.begin('Todo app authentication', 6, function suite(test) {
     test.assertUrlMatch(base_url, 'logout redirects to home page');
   })
 
-  casper.thenOpen(base_url, registerCallback(users[1]));
+  casper.thenOpen(base_url, makeRegisterCallback(users[1]));
   casper.thenOpen(logoutUrl);
-  casper.thenOpen(base_url, registerCallback(users[2]));
+  casper.thenOpen(base_url, makeRegisterCallback(users[2]));
 
   casper.run(function() {
     test.done();
@@ -71,21 +70,40 @@ casper.test.begin('Task creation', 3, function suite(test) {
     test.assertDoesntExist(todoSelector, "tasks are empty initially as expected");
   });
 
+  var tasks = [makeTask(), makeTask(), makeTask()];
+
+  function getNewTaskCallback(task){
+    return function(){
+      casper.thenOpen(base_url, function() {
+        this.fill(newTodoFormSelector, {
+          title: task.title,
+          description: task.description
+        }, true);
+      });
+    }
+  }
+
   // User #2 should still be logged in here and should therefore
   // go to the dashboard automatically.
   casper.thenOpen(base_url, function() {
     test.assertExists(newTodoFormSelector, "todo creation form found");
-    var task = makeTask();
-    this.fill(newTodoFormSelector, {
-      title: task.title,
-      description: task.description
-      // shared_with: [user[0].email, user[1].email].join(', '),
-    }, true);
   });
 
-  casper.thenOpen(base_url, function() {
-    test.assertExists(newTodoFormSelector, "there is now a task");
-  });
+  casper.thenOpen(base_url, getNewTaskCallback(tasks[0]));
+
+  function testTaskList(count){
+    return function(){
+      test.assertElementCount(todoSelector, count, "there are exactly " + count + " task(s) now");
+      test.assertElementCount(todoSelector + ' each span.task-title', count, "each task has a title");
+      test.assertElementCount(todoSelector + ' > .delete-task', count, "each task has an element to delete each task");
+      test.assertElementCount(todoSelector + ' > .mark-task-complete', count, "each task has an element to complete each task");
+    }
+  }
+
+  casper.thenOpen(base_url, testTaskList(1));
+
+  casper.thenOpen(base_url, getNewTaskCallback(tasks[0]));
+  casper.thenOpen(base_url, testTaskList(2));
 
 
   casper.run(function() {
