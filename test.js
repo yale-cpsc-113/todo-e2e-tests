@@ -2,11 +2,11 @@ var base_url = casper.cli.options['base_url'];
 
 casper.test.begin('Todo app authentication', 5, function suite(test) {
   casper.start(base_url, function() {
-    test.assertTitle("Google", "google homepage title is the one expected");
-    test.assertExists('form[action="/search"]', "main form is found");
-    this.fill('form[action="/search"]', {
-      q: "casperjs"
-    }, true);
+    test.assertTitle("CPSC113 Todo", "title was as expected");
+    test.assertExists('form[action="/user/login"]', "login form is found");
+    // this.fill('form[action="/search"]', {
+    //   q: "casperjs"
+    // }, true);
   });
 
   casper.then(function() {
