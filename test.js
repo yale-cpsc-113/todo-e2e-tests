@@ -1,21 +1,35 @@
-var base_url = casper.cli.options['base_url'];
+var base_url = casper.cli.options.base_url;
 
-casper.test.begin('Todo app authentication', 5, function suite(test) {
+function makeid(length){
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < length; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
+casper.test.begin('Todo app authentication', 3, function suite(test) {
   casper.start(base_url, function() {
     test.assertTitle("CPSC113 Todo", "title was as expected");
-    test.assertExists('form[action="/user/login"]', "login form is found");
-    // this.fill('form[action="/search"]', {
-    //   q: "casperjs"
-    // }, true);
-  });
+    var loginFormPath = 'form[action="/user/login"]';
+    test.assertExists(loginFormPath, "login form is found");
 
-  casper.then(function() {
-    test.assertTitle("casperjs - Recherche Google", "google title is ok");
-    test.assertUrlMatch(/q=casperjs/, "search term has been submitted");
-    test.assertEval(function() {
-      return __utils__.findAll("h3.r").length >= 10;
-    }, "google search for \"casperjs\" retrieves 10 or more results");
+    // User that should not exist
+    var user = {
+      password: makeid(10),
+      email: makeid(5) + '@yale.edu'
+    };
+    this.fill(loginFormPath, {
+      email: user.email,
+      password: user.password
+    }, true);
   });
+  casper.then(function(){
+      test.assertTextExists('Invalid email address', 'notices invalid user');
+  })
+
 
   casper.run(function() {
     test.done();
