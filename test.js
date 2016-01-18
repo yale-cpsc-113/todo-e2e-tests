@@ -61,3 +61,15 @@ casper.test.begin('Todo app authentication', 6, function suite(test) {
     test.done();
   });
 });
+
+casper.test.begin('Todo creation', 1, function suite(test) {
+
+
+  casper.start(base_url, function() {
+    test.assertTitle("CPSC113 Todo", "title was as expected");
+  });
+
+  casper.run(function() {
+    test.done();
+  });
+});
