@@ -34,6 +34,11 @@ casper.test.begin('Todo app authentication', 4, function suite(test) {
     }, true);
   });
 
+  casper.then(function(){
+    // this.capture('foo.png');
+    test.assertUrlMatch('/dashboard/');
+  });
+
 
   casper.run(function() {
     test.done();
