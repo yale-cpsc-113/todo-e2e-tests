@@ -4,17 +4,19 @@ var users = [makeUser(), makeUser(), makeUser()];
 
 casper.test.begin('Todo app authentication', 5, function suite(test) {
 
+  var registerFormSelector = 'form[action="/user/register"]';
+  var loginFormSelector = 'form[action="/user/login"]';
+
   casper.start(base_url, function() {
     test.assertTitle("CPSC113 Todo", "title was as expected");
   });
 
   casper.thenOpen(base_url, function() {
-    var loginFormPath = 'form[action="/user/login"]';
-    test.assertExists(loginFormPath, "login form is found");
+    test.assertExists(loginFormSelector, "login form is found");
 
     // User that should not exist
     var user = users[0];
-    this.fill(loginFormPath, {
+    this.fill(loginFormSelector, {
       email: user.email,
       password: user.password
     }, true);
@@ -27,8 +29,7 @@ casper.test.begin('Todo app authentication', 5, function suite(test) {
   function registerCallback(user){
     return function(){
       // User that should not exist yet
-      this.echo(user.name);
-      this.fill(registerFormPath, {
+      this.fill(registerFormSelector, {
         fl_name: user.fl_name,
         email: user.email,
         password: user.password,
@@ -38,8 +39,7 @@ casper.test.begin('Todo app authentication', 5, function suite(test) {
   }
 
   casper.thenOpen(base_url, function() {
-    var registerFormPath = 'form[action="/user/register"]';
-    test.assertExists(registerFormPath, "registration form is found");
+    test.assertExists(registerFormSelector, "registration form is found");
   });
 
   casper.thenOpen(base_url, registerCallback(users[0]));
