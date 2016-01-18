@@ -16,4 +16,11 @@ function makeUser(){
     password: makeid(10),
     fl_name: chance.name()
   }
-}
+};
+
+function makeTask(){
+  return {
+    title: chance.sentence(),
+    description: chance.paragraph()
+  }
+};

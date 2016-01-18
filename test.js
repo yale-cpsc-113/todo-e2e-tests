@@ -62,12 +62,31 @@ casper.test.begin('Todo app authentication', 6, function suite(test) {
   });
 });
 
-casper.test.begin('Todo creation', 1, function suite(test) {
+casper.test.begin('Task creation', 3, function suite(test) {
 
 
+  var newTodoFormSelector = 'form[action="/task/create"]';
+  var todoSelector = 'li.task';
   casper.start(base_url, function() {
-    test.assertTitle("CPSC113 Todo", "title was as expected");
+    test.assertDoesntExist(todoSelector, "tasks are empty initially as expected");
   });
+
+  // User #2 should still be logged in here and should therefore
+  // go to the dashboard automatically.
+  casper.thenOpen(base_url, function() {
+    test.assertExists(newTodoFormSelector, "todo creation form found");
+    var task = makeTask();
+    this.fill(newTodoFormSelector, {
+      title: task.title,
+      description: task.description
+      // shared_with: [user[0].email, user[1].email].join(', '),
+    }, true);
+  });
+
+  casper.thenOpen(base_url, function() {
+    test.assertExists(newTodoFormSelector, "there is now a task");
+  });
+
 
   casper.run(function() {
     test.done();
