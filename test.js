@@ -1,25 +1,10 @@
 var base_url = casper.cli.options.base_url;
 
-function makeid(length){
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < length; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}
-
-function makeUser(){
-  return {
-    email: makeid(10) + '@yale.edu',
-    password: makeid(10)
-  }
-}
-
-casper.test.begin('Todo app authentication', 3, function suite(test) {
+casper.test.begin('Todo app authentication', 4, function suite(test) {
   casper.start(base_url, function() {
     test.assertTitle("CPSC113 Todo", "title was as expected");
+  });
+  casper.thenOpen(base_url, function() {
     var loginFormPath = 'form[action="/user/login"]';
     test.assertExists(loginFormPath, "login form is found");
 
@@ -32,8 +17,22 @@ casper.test.begin('Todo app authentication', 3, function suite(test) {
   });
 
   casper.then(function(){
-      test.assertTextExists('Invalid email address', 'notices invalid user');
-  })
+      test.assertTextExists('Invalid email address', 'prevents login of unrecognized user');
+  });
+
+  casper.thenOpen(base_url, function() {
+    var registerFormPath = 'form[action="/user/register"]';
+    test.assertExists(registerFormPath, "registration form is found");
+
+    // User that should not exist
+    var user = makeUser();
+    this.fill(registerFormPath, {
+      fl_name: user.name,
+      email: user.email,
+      password: user.password,
+      password_confirmation: user.password_confirmation
+    }, true);
+  });
 
 
   casper.run(function() {

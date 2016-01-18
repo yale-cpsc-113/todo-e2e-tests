@@ -1,0 +1,20 @@
+{
+  "name": "todo-e2e-tests",
+  "version": "1.0.0",
+  "description": "Tests for class todo app",
+  "main": "test-utils.js",
+  "dependencies": {
+    "chance": "^0.8.0",
+    "jshint": "^2.9.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.yale.edu:cpsc-113-spring-2016/todo-e2e-tests.git"
+  },
+  "author": "",
+  "license": "Unlicense"
+}
