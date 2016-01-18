@@ -2,7 +2,7 @@ var base_url = casper.cli.options.base_url;
 
 var users = [makeUser(), makeUser(), makeUser(), makeUser()];
 
-casper.test.begin('Todo app authentication', 5, function suite(test) {
+casper.test.begin('Todo app authentication', 6, function suite(test) {
 
   var registerFormSelector = 'form[action="/user/register"]';
   var loginFormSelector = 'form[action="/user/login"]';
@@ -48,11 +48,14 @@ casper.test.begin('Todo app authentication', 5, function suite(test) {
     test.assertUrlMatch('/dashboard/', 'user goes to dashboard after registration');
   });
 
-  casper.thenOpen('/user/logout', function(){
-    this.capture('foo.png');
-    test.assertUrlMatch(/^\/$/);
+  var logoutUrl = base_url + '/user/logout';
+  casper.thenOpen(logoutUrl, function(){
+    test.assertUrlMatch(base_url, 'logout redirects to home page');
   })
 
+  casper.thenOpen(base_url, registerCallback(users[1]));
+  casper.thenOpen(logoutUrl);
+  casper.thenOpen(base_url, registerCallback(users[2]));
 
   casper.run(function() {
     test.done();
