@@ -1,6 +1,8 @@
 var base_url = casper.cli.options.base_url;
 
-casper.test.begin('Todo app authentication', 4, function suite(test) {
+var users = [makeUser(), makeUser(), makeUser()];
+
+casper.test.begin('Todo app authentication', 5, function suite(test) {
   casper.start(base_url, function() {
     test.assertTitle("CPSC113 Todo", "title was as expected");
   });
@@ -9,7 +11,7 @@ casper.test.begin('Todo app authentication', 4, function suite(test) {
     test.assertExists(loginFormPath, "login form is found");
 
     // User that should not exist
-    var user = makeUser();
+    var user = users[0];
     this.fill(loginFormPath, {
       email: user.email,
       password: user.password
@@ -24,19 +26,19 @@ casper.test.begin('Todo app authentication', 4, function suite(test) {
     var registerFormPath = 'form[action="/user/register"]';
     test.assertExists(registerFormPath, "registration form is found");
 
-    // User that should not exist
-    var user = makeUser();
+    // User that should not exist yet
+    var user = users[0];
+    this.echo(user.name);
     this.fill(registerFormPath, {
-      fl_name: user.name,
+      fl_name: user.fl_name,
       email: user.email,
       password: user.password,
-      password_confirmation: user.password_confirmation
+      password_confirmation: user.password
     }, true);
   });
 
   casper.then(function(){
-    // this.capture('foo.png');
-    test.assertUrlMatch('/dashboard/');
+    test.assertUrlMatch('/dashboard/', 'user goes to dashboard after registration');
   });
 
 
