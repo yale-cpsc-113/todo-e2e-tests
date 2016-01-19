@@ -61,7 +61,7 @@ casper.test.begin('Todo app authentication', 6, function suite(test) {
   });
 });
 
-casper.test.begin('Task creation', 3, function suite(test) {
+casper.test.begin('Task creation', 10, function suite(test) {
 
 
   var newTodoFormSelector = 'form[action="/task/create"]';
@@ -94,9 +94,9 @@ casper.test.begin('Task creation', 3, function suite(test) {
   function testTaskList(count){
     return function(){
       test.assertElementCount(todoSelector, count, "there are exactly " + count + " task(s) now");
-      test.assertElementCount(todoSelector + ' each span.task-title', count, "each task has a title");
-      test.assertElementCount(todoSelector + ' > .delete-task', count, "each task has an element to delete each task");
-      test.assertElementCount(todoSelector + ' > .mark-task-complete', count, "each task has an element to complete each task");
+      test.assertElementCount(todoSelector + ' span.task-title', count, "each task has a title");
+      test.assertElementCount(todoSelector + ' .delete-task', count, "each task has an element to delete each task");
+      test.assertElementCount(todoSelector + ' .toggle-task', count, "each task has an element to complete each task");
     }
   }
 
