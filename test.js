@@ -61,7 +61,7 @@ casper.test.begin('Todo app authentication', 6, function suite(test) {
   });
 });
 
-casper.test.begin('Task creation', 13, function suite(test) {
+casper.test.begin('Task creation', 15, function suite(test) {
 
 
   var newTodoFormSelector = 'form[action="/task/create"]';
@@ -116,7 +116,10 @@ casper.test.begin('Task creation', 13, function suite(test) {
   });
 
   casper.thenClick('.delete-task', function(){
-    test.assertElementCount('.complete-task', 0, 'none of the tasks is complete after re-toggle');
+    test.assertElementCount(taskSelector, 1, 'after deleting a task, there is only one left');
+  });
+  casper.thenClick('.delete-task', function(){
+    test.assertElementCount(taskSelector, 0, 'after deleting another task, there is none left');
   });
 
   casper.run(function() {
