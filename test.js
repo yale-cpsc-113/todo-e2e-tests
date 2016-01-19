@@ -61,13 +61,13 @@ casper.test.begin('Todo app authentication', 6, function suite(test) {
   });
 });
 
-casper.test.begin('Task creation', 10, function suite(test) {
+casper.test.begin('Task creation', 13, function suite(test) {
 
 
   var newTodoFormSelector = 'form[action="/task/create"]';
-  var todoSelector = 'li.task';
+  var taskSelector = 'li.task';
   casper.start(base_url, function() {
-    test.assertDoesntExist(todoSelector, "tasks are empty initially as expected");
+    test.assertDoesntExist(taskSelector, "tasks are empty initially as expected");
   });
 
   var tasks = [makeTask(), makeTask(), makeTask()];
@@ -91,12 +91,12 @@ casper.test.begin('Task creation', 10, function suite(test) {
 
   casper.thenOpen(base_url, getNewTaskCallback(tasks[0]));
 
-  function testTaskList(count){
+  function testTaskList(count, tasksComplete){
     return function(){
-      test.assertElementCount(todoSelector, count, "there are exactly " + count + " task(s) now");
-      test.assertElementCount(todoSelector + ' span.task-title', count, "each task has a title");
-      test.assertElementCount(todoSelector + ' .delete-task', count, "each task has an element to delete each task");
-      test.assertElementCount(todoSelector + ' .toggle-task', count, "each task has an element to complete each task");
+      test.assertElementCount(taskSelector, count, "there are exactly " + count + " task(s) now");
+      test.assertElementCount(taskSelector + ' span.task-title', count, "each task has a title");
+      test.assertElementCount(taskSelector + ' .delete-task', count, "each task has an element to delete each task");
+      test.assertElementCount(taskSelector + ' .toggle-task', count, "each task has an element to complete each task");
     }
   }
 
@@ -104,7 +104,20 @@ casper.test.begin('Task creation', 10, function suite(test) {
 
   casper.thenOpen(base_url, getNewTaskCallback(tasks[0]));
   casper.thenOpen(base_url, testTaskList(2));
+  casper.then(function(){
+    test.assertElementCount('.complete-task', 0, 'none of the tasks are complete');
+  });
 
+  casper.thenClick('.toggle-task', function(){
+    test.assertElementCount('.complete-task', 1, 'one of the tasks is complete after toggle');
+  });
+  casper.thenClick('.complete-task .toggle-task', function(){
+    test.assertElementCount('.complete-task', 0, 'none of the tasks is complete after re-toggle');
+  });
+
+  casper.thenClick('.delete-task', function(){
+    test.assertElementCount('.complete-task', 0, 'none of the tasks is complete after re-toggle');
+  });
 
   casper.run(function() {
     test.done();
