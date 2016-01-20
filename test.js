@@ -1,59 +1,130 @@
+/*
+ * "End to end" test script for the social todo application that we
+ * are building in Yale's CPSC113 in the Spring of 2016. This script
+ * interacts with your application's user iterface, checking that
+ * it behaves in the way we expect.
+ */
+
+
+// CONFIGURATION ---------------
 var base_url = casper.cli.options.base_url;
-
 var users = [makeUser(), makeUser(), makeUser(), makeUser()];
+var taskSelector = 'li.task';
+var taskListSelector = 'ul.tasks';
+var errors = {
+  invalidEmail: 'Invalid email address',
+  duplicateEmail: 'Account with this email already exists!',
+  invalidPassword: 'Invalid password'
+};
+var registerFormSelector = 'form[action="/user/register"]';
+var loginFormSelector = 'form[action="/user/login"]';
+var newTodoFormSelector = 'form[action="/task/create"]';
 
-casper.test.begin('Todo app authentication', 6, function suite(test) {
 
-  var registerFormSelector = 'form[action="/user/register"]';
-  var loginFormSelector = 'form[action="/user/login"]';
+// HELPER FUNCTIONS ---------------
 
-  casper.start(base_url, function() {
-    test.assertTitle("CPSC113 Todo", "title was as expected");
-  });
-
-  casper.thenOpen(base_url, function() {
-    test.assertExists(loginFormSelector, "login form is found");
-
-    // User that should not exist
-    var user = users[0];
+// Returns a function that will log in a particular user
+// assuming that we are on the homepage of the app.
+function makeLoginCallback(user, password){
+  return function(){
+    if (typeof(password) === 'undefined') {
+      password = user.password;
+    }
     this.fill(loginFormSelector, {
       email: user.email,
-      password: user.password
-    }, true);
-  });
+      password: password
+    }, false);
+    this.click('.log-in-submit');
+  };
+}
 
-  casper.then(function(){
-      test.assertTextExists('Invalid email address', 'prevents login of unrecognized user');
-  });
-
-  function makeRegisterCallback(user){
-    return function(){
-      this.fill(registerFormSelector, {
-        fl_name: user.fl_name,
-        email: user.email,
-        password: user.password,
-        password_confirmation: user.password
-      }, true);
-    }
+// Returns a function that will register a particular user
+// assuming that we are on the homepage of the app.
+function makeRegisterCallback(user, password){
+  if (typeof(password) === 'undefined') {
+    password = user.password;
   }
+  return function(){
+    this.fill(registerFormSelector, {
+      fl_name: user.fl_name,
+      email: user.email,
+      password: password,
+      password_confirmation: password
+    }, false);
+    this.click('.sign-up-submit');
+  };
+}
 
-  casper.thenOpen(base_url, function() {
-    test.assertExists(registerFormSelector, "registration form is found");
-  });
+// Returns a function that will add a task assuming
+// we are on the task dashboard and there is a task addition form.
+function getNewTaskCallback(task){
+  return function(){
+    casper.thenOpen(base_url, function() {
+      this.fill(newTodoFormSelector, {
+        title: task.title,
+        description: task.description
+      }, true);
+    });
+  };
+}
 
-  casper.thenOpen(base_url, makeRegisterCallback(users[0]));
 
+// TESTING THE LANDING PAGE ---------------
+casper.test.begin('The landing page', 6, function suite(test) {
+    casper.start(base_url, function() {
+      test.assertTitle("CPSC113 Todo", "has the right title");
+      test.assertExists(loginFormSelector, "shows a login form");
+      test.assertExists(registerFormSelector, "shows a registration form form");
+      test.assertDoesntExist(taskListSelector, "does not show a task list on login page");
+      test.assertTextDoesntExist(errors.invalidEmail, 'does not show invalid email error');
+      test.assertTextDoesntExist(errors.duplicateEmail, 'does not show duplicate email error');
+      test.assertTextDoesntExist(errors.invalidEmail, 'does not show invalid email error');
+    });
+    casper.run(function() {
+      test.done();
+    });
+});
+
+
+// TESTING THE LOGIN SYSTEM ---------------
+casper.test.begin('The login system', 8, function suite(test) {
+
+  // Try to log in without registering
+  casper.start(base_url, makeLoginCallback(users[0]));
   casper.then(function(){
-    test.assertUrlMatch('/dashboard/', 'user goes to dashboard after registration');
+      test.assertTextExists(errors.invalidEmail, 'prevents login of unrecognized user');
   });
 
+  // Now register and see if we are appropriately welcomed
+  casper.thenOpen(base_url, makeRegisterCallback(users[0]));
+  casper.then(function(){
+    test.assertTextExists('Welcome ' + users[0].fl_name, 'welcomes users by name after registration');
+  });
+
+  // Logout and see that we go back to the home page
   var logoutUrl = base_url + '/user/logout';
   casper.thenOpen(logoutUrl, function(){
-    test.assertUrlMatch(base_url, 'logout redirects to home page');
-  })
+    test.assertUrlMatch(base_url, 'redirects to home page after logout');
+  });
 
+  // Try to register the same user again and ensure we get an error message
+  casper.thenOpen(base_url, makeRegisterCallback(users[0]));
+  casper.then(function(){
+    casper.capture('foo.png');
+    test.assertTextExists(errors.duplicateEmail, 'denies registration if email already exists');
+  });
+
+  // Try to log in with the wrong password and ensure we get an error message
+  casper.thenOpen(base_url, makeLoginCallback(users[0], users[0].password + 'blah'));
+  casper.then(function(){
+    test.assertTextExists(errors.invalidPassword, 'denies login with a bad password');
+  });
+
+  // Register the next user and then immediately log out
   casper.thenOpen(base_url, makeRegisterCallback(users[1]));
   casper.thenOpen(logoutUrl);
+
+  // Register the next user
   casper.thenOpen(base_url, makeRegisterCallback(users[2]));
 
   casper.run(function() {
@@ -61,60 +132,57 @@ casper.test.begin('Todo app authentication', 6, function suite(test) {
   });
 });
 
-casper.test.begin('Task creation', 15, function suite(test) {
 
+// TESTING TASK DASHBOARD ---------------
+casper.test.begin('The task dashboard', 15, function suite(test) {
 
-  var newTodoFormSelector = 'form[action="/task/create"]';
-  var taskSelector = 'li.task';
   casper.start(base_url, function() {
-    test.assertDoesntExist(taskSelector, "tasks are empty initially as expected");
+    test.assertDoesntExist(taskSelector, "has no tasks initially");
   });
 
   var tasks = [makeTask(), makeTask(), makeTask()];
 
-  function getNewTaskCallback(task){
-    return function(){
-      casper.thenOpen(base_url, function() {
-        this.fill(newTodoFormSelector, {
-          title: task.title,
-          description: task.description
-        }, true);
-      });
-    }
-  }
-
   // User #2 should still be logged in here and should therefore
   // go to the dashboard automatically.
   casper.thenOpen(base_url, function() {
-    test.assertExists(newTodoFormSelector, "todo creation form found");
+    test.assertExists(newTodoFormSelector, "has a task creation form for logged in users");
   });
 
-  casper.thenOpen(base_url, getNewTaskCallback(tasks[0]));
-
-  function testTaskList(count, tasksComplete){
+  // Return a function that tests whether the dashboard has
+  // the right number of tasks.
+  function testTaskList(taskCount, tasksComplete){
     return function(){
-      test.assertElementCount(taskSelector, count, "there are exactly " + count + " task(s) now");
-      test.assertElementCount(taskSelector + ' span.task-title', count, "each task has a title");
-      test.assertElementCount(taskSelector + ' .delete-task', count, "each task has an element to delete each task");
-      test.assertElementCount(taskSelector + ' .toggle-task', count, "each task has an element to complete each task");
-    }
+      test.assertElementCount(taskSelector, taskCount, "there are exactly " + taskCount + " task(s) now");
+      test.assertElementCount(taskSelector + ' span.task-title', taskCount, "each task has a title");
+      test.assertElementCount(taskSelector + ' .delete-task', taskCount, "each task has an element to delete each task");
+      test.assertElementCount(taskSelector + ' .toggle-task', taskCount, "each task has an element to complete each task");
+    };
   }
 
+  // Add a task and test that there is exactly one in the dashboard
+  casper.thenOpen(base_url, getNewTaskCallback(tasks[0]));
   casper.thenOpen(base_url, testTaskList(1));
 
+  // Add another task and test that it shows up.
   casper.thenOpen(base_url, getNewTaskCallback(tasks[0]));
   casper.thenOpen(base_url, testTaskList(2));
+
+  // Test that none of the tasks are complete
   casper.then(function(){
     test.assertElementCount('.complete-task', 0, 'none of the tasks are complete');
   });
 
+  // Toggle a task and test if one shows up as complete
   casper.thenClick('.toggle-task', function(){
     test.assertElementCount('.complete-task', 1, 'one of the tasks is complete after toggle');
   });
+
+  // Toggle it bask and ensure it is no longer complete
   casper.thenClick('.complete-task .toggle-task', function(){
     test.assertElementCount('.complete-task', 0, 'none of the tasks is complete after re-toggle');
   });
 
+  // Delete the tasks and ensure they are disappearing from the interface
   casper.thenClick('.delete-task', function(){
     test.assertElementCount(taskSelector, 1, 'after deleting a task, there is only one left');
   });
