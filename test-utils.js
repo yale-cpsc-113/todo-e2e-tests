@@ -15,8 +15,8 @@ function makeUser(){
     email: chance.email(),
     password: makeid(10),
     fl_name: chance.name()
-  }
-};
+  };
+}
 
 function makeTask(collaborator1, collaborator2, collaborator3){
   return {
@@ -25,5 +25,5 @@ function makeTask(collaborator1, collaborator2, collaborator3){
     collaborator1: collaborator1,
     collaborator2: collaborator2,
     collaborator3: collaborator3
-  }
-};
+  };
+}
