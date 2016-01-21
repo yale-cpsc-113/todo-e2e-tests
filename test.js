@@ -101,7 +101,7 @@ casper.test.begin('The login system', 8, function suite(test) {
   // Now register and see if we are appropriately welcomed
   casper.thenOpen(base_url, makeRegisterCallback(users[0]));
   casper.then(function(){
-    test.assertTextExists('Welcome ' + users[0].fl_name, 'welcomes users by name after registration');
+    test.assertTextExists('Welcome, ' + users[0].fl_name.split(' ')[0], 'welcomes users by name after registration');
   });
 
   // Logout and see that we go back to the home page
