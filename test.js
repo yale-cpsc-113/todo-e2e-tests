@@ -173,27 +173,39 @@ casper.test.begin('The task dashboard', 15, function suite(test) {
   casper.thenOpen(base_url, getNewTaskCallback(tasks[0]));
   casper.thenOpen(base_url, testTaskList(2));
 
+  // Test that title of added tasks are shown
+  casper.then(function(){
+    casper.capture('foo.png');
+    test.assertTextExists(tasks[0].title, 'shows the title of added tasks');
+  });
+
   // Test that none of the tasks are complete
   casper.then(function(){
-    test.assertElementCount('.complete-task', 0, 'none of the tasks are complete');
+    test.assertElementCount('.complete-task', 0, 'shows none of the tasks are complete initially');
   });
 
   // Toggle a task and test if one shows up as complete
   casper.thenClick('.toggle-task', function(){
-    test.assertElementCount('.complete-task', 1, 'one of the tasks is complete after toggle');
+    test.assertElementCount('.complete-task', 1, 'shows one of the tasks is complete after toggle');
   });
 
   // Toggle it bask and ensure it is no longer complete
   casper.thenClick('.complete-task .toggle-task', function(){
-    test.assertElementCount('.complete-task', 0, 'none of the tasks is complete after re-toggle');
+    test.assertElementCount('.complete-task', 0, 'shows none of the tasks is complete after re-toggle');
   });
 
   // Delete the tasks and ensure they are disappearing from the interface
   casper.thenClick('.delete-task', function(){
-    test.assertElementCount(taskSelector, 1, 'after deleting a task, there is only one left');
+    test.assertElementCount(taskSelector, 1, 'shows only one left after deletion');
   });
   casper.thenClick('.delete-task', function(){
-    test.assertElementCount(taskSelector, 0, 'after deleting another task, there is none left');
+    test.assertElementCount(taskSelector, 0, 'shows none left after another deletion');
+  });
+
+  casper.run(function() {
+    test.done();
+  });
+});
   });
 
   casper.run(function() {
