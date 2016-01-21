@@ -146,7 +146,13 @@ casper.test.begin('The task dashboard', 15, function suite(test) {
     test.assertDoesntExist(taskSelector, "has no tasks initially");
   });
 
-  var tasks = [makeTask(), makeTask(), makeTask()];
+  // Make random tasks, the first two of which are shared with certain
+  // other users.
+  var tasks = [
+    makeTask(users[1].email),
+    makeTask(users[1].email, users[2].email),
+    makeTask()
+  ];
 
   // User #2 should still be logged in here and should therefore
   // go to the dashboard automatically.
