@@ -124,7 +124,7 @@ casper.test.begin('The landing page', 7, function suite(test) {
 
 
 // TESTING THE LOGIN SYSTEM ---------------
-casper.test.begin('The login system', 5, function suite(test) {
+casper.test.begin('The login system', 11, function suite(test) {
 
   // Try to log in without registering
   casper.start(base_url, makeLoginCallback(users[0]));
