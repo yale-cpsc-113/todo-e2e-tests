@@ -20,7 +20,7 @@ var registerFormSelector = 'form[action="/user/register"]';
 var loginFormSelector = 'form[action="/user/login"]';
 var newTodoFormSelector = 'form[action="/task/create"]';
 
-var tooLongString = (new Array(51)).join('x');
+var tooLongString = (new Array(52)).join('x');
 
 // Make random users.
 var users = [makeUser(), makeUser(), makeUser(), makeUser()];
@@ -266,7 +266,7 @@ casper.test.begin('Task sharing', 12, function suite(test) {
   casper.then(function(){
     test.assertElementCount(taskSelector, 2, "there are 2 tasks for user[1]");
     test.assertElementCount(taskSelector + ' .delete-task', 0, "none can be deleted by user[1]");
-    test.assertElementCount(taskSelector + '.complete-task', 0, 'all are shown incomplete initially');
+    test.assertElementCount(taskSelector + ' .complete-task', 0, 'all are shown incomplete initially');
   });
   // Toggle a task and test if one shows up as complete
   casper.thenClick(taskSelector + ' .toggle-task', function(){
