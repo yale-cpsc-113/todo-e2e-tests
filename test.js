@@ -62,7 +62,10 @@ function getNewTaskCallback(task){
     casper.thenOpen(base_url, function() {
       this.fill(newTodoFormSelector, {
         title: task.title,
-        description: task.description
+        description: task.description,
+        collaborator1: task.collaborator1,
+        collaborator2: task.collaborator2,
+        collaborator3: task.collaborator3,
       }, true);
     });
   };

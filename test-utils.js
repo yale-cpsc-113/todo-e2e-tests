@@ -18,9 +18,12 @@ function makeUser(){
   }
 };
 
-function makeTask(){
+function makeTask(collaborator1, collaborator2, collaborator3){
   return {
     title: chance.sentence(),
-    description: chance.paragraph()
+    description: chance.paragraph(),
+    collaborator1: collaborator1,
+    collaborator2: collaborator2,
+    collaborator3: collaborator3
   }
 };
