@@ -130,6 +130,9 @@ casper.test.begin('The login system', 8, function suite(test) {
   // Register the next user
   casper.thenOpen(base_url, makeRegisterCallback(users[2]));
 
+  // Logout
+  casper.thenOpen(logoutUrl);
+
   casper.run(function() {
     test.done();
   });
