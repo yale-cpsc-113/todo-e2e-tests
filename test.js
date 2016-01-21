@@ -20,8 +20,19 @@ var registerFormSelector = 'form[action="/user/register"]';
 var loginFormSelector = 'form[action="/user/login"]';
 var newTodoFormSelector = 'form[action="/task/create"]';
 
+var tooLongString = (new Array(51)).join('x');
+
 // Make random users.
 var users = [makeUser(), makeUser(), makeUser(), makeUser()];
+var badUsers = [
+  makeUser({fl_name: '', description: 'name too short'}),
+  makeUser({fl_name: tooLongString, description: 'name too long'}),
+  makeUser({email: '', description: 'email too short'}),
+  makeUser({email: tooLongString + '@yale.edu', description: 'email too long'}),
+  makeUser({password: '', description: 'password too short'}),
+  makeUser({password: tooLongString, description: 'password too long'}),
+];
+
 
 // Make random tasks, the first two of which are shared with certain
 // other users.
@@ -120,6 +131,17 @@ casper.test.begin('The login system', 5, function suite(test) {
   casper.then(function(){
       test.assertTextExists(errors.invalidEmail, 'prevents login of unrecognized user');
   });
+
+  for (var i = 0; i < badUsers.length; i++) {
+    var user = badUsers[i];
+    (function(user){
+      casper.thenOpen(base_url, makeRegisterCallback(user));
+      casper.then(function(){
+        test.assertElementCount('input.validation-error', 1, 'raises an error when user registers with ' + user.description);
+      });
+      casper.thenOpen(logoutUrl);
+    }(user));
+  }
 
   // Now register and see if we are appropriately welcomed
   casper.thenOpen(base_url, makeRegisterCallback(users[0]));

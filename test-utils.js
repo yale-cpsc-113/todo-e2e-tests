@@ -10,12 +10,20 @@ function makeid(length){
     return text;
 }
 
-function makeUser(){
-  return {
+function makeUser(overloads){
+  var user = {
     email: chance.email(),
     password: makeid(10),
-    fl_name: chance.name()
+    fl_name: chance.name(),
+    description: null
   };
+  // Write over those random defaults if we're told to do so
+  for(var key in user){
+    if (overloads && overloads.hasOwnProperty(key)) {
+      user[key] = overloads[key];
+    }
+  }
+  return user;
 }
 
 function makeTask(collaborator1, collaborator2, collaborator3){
