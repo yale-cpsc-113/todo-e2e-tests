@@ -42,4 +42,16 @@ In order to run these tests, you will need to
 [node](https://nodejs.org/en/), and the node.js dependencies described in the
 `package.js` file. This will likely be easiest for you if you are using a Unix-like
 machine. This could be a Mac, a computer in the Zoo cluster at Yale, or a
-cloud VM like the free service [cloud9](http://c9.io). 
+cloud VM like the free service [cloud9](http://c9.io). Once you have
+CasperJS installed, you can run the tests as such
+
+```
+casperjs test test.js --base_url=YOUR_URL --includes=test-utils.js
+```
+
+So, if you are running your app on localhost port 5000, you'd run the following
+command
+
+```
+casperjs test test.js --base_url='http://localhost:5000' --includes=test-utils.js
+```
