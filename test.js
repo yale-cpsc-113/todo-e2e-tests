@@ -9,8 +9,8 @@
 // CONFIGURATION ---------------
 var base_url = casper.cli.options.base_url;
 var logoutUrl = base_url + '/user/logout';
-var taskSelector = 'li.task';
-var taskListSelector = 'ul.tasks';
+var taskSelector = '.tasks-list-item';
+var taskListSelector = '.tasks-list';
 var errors = {
   invalidEmail: 'Invalid email address',
   duplicateEmail: 'Account with this email already exists!',
