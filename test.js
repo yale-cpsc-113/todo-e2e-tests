@@ -8,7 +8,7 @@
 
 // CONFIGURATION ---------------
 var base_url = casper.cli.options.base_url;
-var users = [makeUser(), makeUser(), makeUser(), makeUser()];
+var logoutUrl = base_url + '/user/logout';
 var taskSelector = 'li.task';
 var taskListSelector = 'ul.tasks';
 var errors = {
@@ -19,6 +19,17 @@ var errors = {
 var registerFormSelector = 'form[action="/user/register"]';
 var loginFormSelector = 'form[action="/user/login"]';
 var newTodoFormSelector = 'form[action="/task/create"]';
+
+// Make random users.
+var users = [makeUser(), makeUser(), makeUser(), makeUser()];
+
+// Make random tasks, the first two of which are shared with certain
+// other users.
+var tasks = [
+  makeTask(users[1].email),
+  makeTask(users[1].email, users[2].email),
+  makeTask()
+];
 
 
 // HELPER FUNCTIONS ---------------
@@ -71,6 +82,18 @@ function getNewTaskCallback(task){
   };
 }
 
+// Return a function that tests whether the dashboard has
+// the right number of tasks.
+function testTaskList(test, taskCount, tasksComplete){
+  return function(){
+    test.assertElementCount(taskSelector, taskCount, "there are exactly " + taskCount + " task(s) now");
+    test.assertElementCount(taskSelector + ' span.task-title', taskCount, "each task has a title");
+    test.assertElementCount(taskSelector + ' .delete-task', taskCount, "each task has an element to delete each task");
+    test.assertElementCount(taskSelector + ' .toggle-task', taskCount, "each task has an element to complete each task");
+  };
+}
+
+
 
 // TESTING THE LANDING PAGE ---------------
 casper.test.begin('The landing page', 7, function suite(test) {
@@ -105,7 +128,6 @@ casper.test.begin('The login system', 5, function suite(test) {
   });
 
   // Logout and see that we go back to the home page
-  var logoutUrl = base_url + '/user/logout';
   casper.thenOpen(logoutUrl, function(){
     test.assertUrlMatch(base_url, 'redirects to home page after logout');
   });
@@ -149,42 +171,22 @@ casper.test.begin('The task dashboard', 16, function suite(test) {
     test.assertDoesntExist(taskSelector, "has no tasks initially");
   });
 
-  // Make random tasks, the first two of which are shared with certain
-  // other users.
-  var tasks = [
-    makeTask(users[1].email),
-    makeTask(users[1].email, users[2].email),
-    makeTask()
-  ];
-
   // User #2 should still be logged in here and should therefore
   // go to the dashboard automatically.
   casper.thenOpen(base_url, function() {
     test.assertExists(newTodoFormSelector, "has a task creation form for logged in users");
   });
 
-  // Return a function that tests whether the dashboard has
-  // the right number of tasks.
-  function testTaskList(taskCount, tasksComplete){
-    return function(){
-      test.assertElementCount(taskSelector, taskCount, "there are exactly " + taskCount + " task(s) now");
-      test.assertElementCount(taskSelector + ' span.task-title', taskCount, "each task has a title");
-      test.assertElementCount(taskSelector + ' .delete-task', taskCount, "each task has an element to delete each task");
-      test.assertElementCount(taskSelector + ' .toggle-task', taskCount, "each task has an element to complete each task");
-    };
-  }
-
   // Add a task and test that there is exactly one in the dashboard
   casper.thenOpen(base_url, getNewTaskCallback(tasks[0]));
-  casper.thenOpen(base_url, testTaskList(1));
+  casper.thenOpen(base_url, testTaskList(test, 1));
 
   // Add another task and test that it shows up.
-  casper.thenOpen(base_url, getNewTaskCallback(tasks[0]));
-  casper.thenOpen(base_url, testTaskList(2));
+  casper.thenOpen(base_url, getNewTaskCallback(tasks[1]));
+  casper.thenOpen(base_url, testTaskList(test, 2));
 
   // Test that title of added tasks are shown
   casper.then(function(){
-    casper.capture('foo.png');
     test.assertTextExists(tasks[0].title, 'shows the title of added tasks');
   });
 
@@ -211,17 +213,75 @@ casper.test.begin('The task dashboard', 16, function suite(test) {
     test.assertElementCount(taskSelector, 0, 'shows none left after another deletion');
   });
 
+  // Logout
+  casper.thenOpen(logoutUrl);
+
   casper.run(function() {
     test.done();
   });
 });
 
 // TESTING TASK DASHBOARD ---------------
-casper.test.begin('Task sharing', 1, function suite(test) {
+casper.test.begin('Task sharing', 12, function suite(test) {
 
-  casper.start(base_url, function() {
-    test.assertDoesntExist(taskSelector, "has no tasks initially");
+  // Log in
+  casper.start(base_url, makeLoginCallback(users[0]));
+
+  // Add a task and test that there is exactly one in the dashboard
+  for (var i = 0; i < tasks.length; i++) {
+    casper.thenOpen(base_url, getNewTaskCallback(tasks[i]));
+  }
+  casper.then(function(){
+    test.assertElementCount(taskSelector, 3, "there are 3 tasks for user[0]");
+    test.assertElementCount(taskSelector + ' .delete-task', 3, "each has ability to delete");
   });
+
+  // Logout
+  casper.thenOpen(logoutUrl);
+
+  // Log in user[1]
+  casper.thenOpen(base_url, makeLoginCallback(users[1]));
+  casper.then(function(){
+    test.assertElementCount(taskSelector, 2, "there are 2 tasks for user[1]");
+    test.assertElementCount(taskSelector + ' .delete-task', 0, "none can be deleted by user[1]");
+    test.assertElementCount(taskSelector + '.complete-task', 0, 'all are shown incomplete initially');
+  });
+  // Toggle a task and test if one shows up as complete
+  casper.thenClick(taskSelector + ' .toggle-task', function(){
+    test.assertElementCount('.complete-task', 1, 'one is shown as complete after toggle');
+  });
+  casper.thenOpen(logoutUrl);
+
+  // Log in user[2]
+  casper.thenOpen(base_url, makeLoginCallback(users[2]));
+  casper.then(function(){
+    test.assertElementCount(taskSelector, 1, "there is 1 task for user[2]");
+    test.assertElementCount(taskSelector + ' .delete-task', 0, "none can be deleted by user[2]");
+  });
+  casper.thenOpen(logoutUrl);
+
+  // Log in user[0] again
+  casper.thenOpen(base_url, makeLoginCallback(users[0]));
+  casper.then(function(){
+    test.assertElementCount(taskSelector, 3, "there are 3 tasks for user[0] still");
+    test.assertElementCount(taskSelector + '.complete-task', 1, 'one is shown as complete');
+  });
+  casper.then(function(){
+    this.repeat(3, function(){
+      this.click(taskSelector + ' .delete-task');
+    });
+  });
+  casper.then(function(){
+    test.assertElementCount(taskSelector, 0, "there are none for user[0] after deletion");
+  });
+  casper.thenOpen(logoutUrl);
+
+  // Log in user[2]
+  casper.thenOpen(base_url, makeLoginCallback(users[2]));
+  casper.then(function(){
+    test.assertElementCount(taskSelector, 0, "there are no tasks for user[2] now");
+  });
+  casper.thenOpen(logoutUrl);
 
   casper.run(function() {
     test.done();
