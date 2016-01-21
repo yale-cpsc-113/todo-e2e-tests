@@ -137,7 +137,7 @@ casper.test.begin('The login system', 5, function suite(test) {
     (function(user){
       casper.thenOpen(base_url, makeRegisterCallback(user));
       casper.then(function(){
-        test.assertElementCount('input.validation-error', 1, 'raises an error when user registers with ' + user.description);
+        test.assertElementCount('.validation-error', 1, 'raises an error when user registers with ' + user.description);
       });
       casper.thenOpen(logoutUrl);
     }(user));
