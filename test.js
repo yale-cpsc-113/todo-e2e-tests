@@ -73,7 +73,7 @@ function getNewTaskCallback(task){
 
 
 // TESTING THE LANDING PAGE ---------------
-casper.test.begin('The landing page', 6, function suite(test) {
+casper.test.begin('The landing page', 7, function suite(test) {
     casper.start(base_url, function() {
       test.assertTitle("CPSC113 Todo", "has the right title");
       test.assertExists(loginFormSelector, "shows a login form");
@@ -90,7 +90,7 @@ casper.test.begin('The landing page', 6, function suite(test) {
 
 
 // TESTING THE LOGIN SYSTEM ---------------
-casper.test.begin('The login system', 8, function suite(test) {
+casper.test.begin('The login system', 5, function suite(test) {
 
   // Try to log in without registering
   casper.start(base_url, makeLoginCallback(users[0]));
@@ -113,7 +113,6 @@ casper.test.begin('The login system', 8, function suite(test) {
   // Try to register the same user again and ensure we get an error message
   casper.thenOpen(base_url, makeRegisterCallback(users[0]));
   casper.then(function(){
-    casper.capture('foo.png');
     test.assertTextExists(errors.duplicateEmail, 'denies registration if email already exists');
   });
 
@@ -140,9 +139,13 @@ casper.test.begin('The login system', 8, function suite(test) {
 
 
 // TESTING TASK DASHBOARD ---------------
-casper.test.begin('The task dashboard', 15, function suite(test) {
+casper.test.begin('The task dashboard', 16, function suite(test) {
 
-  casper.start(base_url, function() {
+  // Log in
+  casper.start(base_url, makeLoginCallback(users[0]));
+
+  // Ensure there are no tasks
+  casper.then(function() {
     test.assertDoesntExist(taskSelector, "has no tasks initially");
   });
 
@@ -212,6 +215,12 @@ casper.test.begin('The task dashboard', 15, function suite(test) {
     test.done();
   });
 });
+
+// TESTING TASK DASHBOARD ---------------
+casper.test.begin('Task sharing', 1, function suite(test) {
+
+  casper.start(base_url, function() {
+    test.assertDoesntExist(taskSelector, "has no tasks initially");
   });
 
   casper.run(function() {
