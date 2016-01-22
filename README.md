@@ -56,6 +56,66 @@ command
 casperjs test test.js --base_url='http://localhost:5000' --includes=test-utils.js
 ```
 
+## What to expect
+
+You should see output that looks something like the text below, but with prettier colors
+
+```
+$ casperjs test test.js --base_url='http://cpsc113-todo-sample.herokuapp.com' --includes=test-utils.js
+Test file: test.js
+# The landing page
+PASS has the right title
+PASS shows a login form
+PASS shows a registration form form
+PASS does not show a task list on login page
+PASS does not show invalid email error
+PASS does not show duplicate email error
+PASS does not show invalid email error
+# The login system
+PASS prevents login of unrecognized user
+PASS raises an error when user registers with name too short
+PASS raises an error when user registers with name too long
+PASS raises an error when user registers with email too short
+PASS raises an error when user registers with email too long
+PASS raises an error when user registers with password too short
+PASS raises an error when user registers with password too long
+PASS welcomes users by name after registration
+PASS redirects to home page after logout
+PASS denies registration if email already exists
+PASS denies login with a bad password
+# The task dashboard
+PASS has no tasks initially
+PASS has a task creation form for logged in users
+PASS there are exactly 1 task(s) now
+PASS each task has a title
+PASS each task has an element to delete each task
+PASS each task has an element to complete each task
+PASS there are exactly 2 task(s) now
+PASS each task has a title
+PASS each task has an element to delete each task
+PASS each task has an element to complete each task
+PASS shows the title of added tasks
+PASS shows none of the tasks are complete initially
+PASS shows one of the tasks is complete after toggle
+PASS shows none of the tasks is complete after re-toggle
+PASS shows only one left after deletion
+PASS shows none left after another deletion
+# Task sharing
+PASS there are 3 tasks for user[0]
+PASS each has ability to delete
+PASS there are 2 tasks for user[1]
+PASS none can be deleted by user[1]
+PASS all are shown incomplete initially
+PASS one is shown as complete after toggle
+PASS there is 1 task for user[2]
+PASS none can be deleted by user[2]
+PASS there are 3 tasks for user[0] still
+PASS one is shown as complete
+PASS there are none for user[0] after deletion
+PASS there are no tasks for user[2] now
+PASS 46 tests executed in 18.518s, 46 passed, 0 failed, 0 dubious, 0 skipped.
+```
+
 ## Running the end-to-end tests on Cloud9
 
 If you know how to install CapserJS on your computer and run the tests from
