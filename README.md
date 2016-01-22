@@ -55,3 +55,25 @@ command
 ```
 casperjs test test.js --base_url='http://localhost:5000' --includes=test-utils.js
 ```
+
+## Running the end-to-end tests on Cloud9
+
+If you know how to install CapserJS on your computer and run the tests from
+there you likely do not require our help in many regards. If you have no clue
+how to do such a thing, we recommend that you use Cloud9, which will give you
+an Ubuntu virtual machine in the cloud from which you can run tests. Once
+you create a new workspace on cloud9, you can enter the following commands
+to run the tests.
+
+  npm install -g phantomjs
+  npm install -g casperjs
+  git clone https://github.com/yale-cpsc-113/todo-e2e-tests.git
+  cd todo-e2e-tests.git
+  npm install
+  casperjs test test.js --includes=test-utils.js --base_url='http://cpsc113-todo-sample.herokuapp.com'
+
+In the screencast below, I am showing how your output should look in a fresh
+c9 instance. (At one point in that screencast I incorrectly ran `npm install -g`
+instead of `npm install` and so the tests fail, which I then fix. Be not confused.)
+
+[![asciicast](https://asciinema.org/a/dlfkznzni12ijlx9dr97fqlhf.png)](https://asciinema.org/a/dlfkznzni12ijlx9dr97fqlhf)
