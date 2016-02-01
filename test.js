@@ -16,8 +16,8 @@ var errors = {
   duplicateEmail: 'Account with this email already exists!',
   invalidPassword: 'Invalid password'
 };
-var registerFormSelector = 'form[action="/user/register"]';
-var loginFormSelector = 'form[action="/user/login"]';
+var registerFormSelector = 'form.register,form[action="/user/register"]';
+var loginFormSelector = 'form.login,form[action="/user/login"]';
 var newTodoFormSelector = 'form[action="/task/create"]';
 
 var tooLongString = (new Array(52)).join('x');
@@ -67,13 +67,17 @@ function makeRegisterCallback(user, password){
     password = user.password;
   }
   return function(){
-    this.fill(registerFormSelector, {
-      fl_name: user.fl_name,
-      email: user.email,
-      password: password,
-      password_confirmation: password
-    }, false);
-    this.click('.sign-up-submit');
+    casper.waitForSelector(registerFormSelector, function(){
+      this.fill(registerFormSelector, {
+        fl_name: user.fl_name,
+        email: user.email,
+        password: password,
+        password_confirmation: password
+      }, false);
+      this.click('.sign-up-submit');
+    }, function(){ // set the timeout
+      casper.capture('form-timeout.png');
+    });
   };
 }
 
