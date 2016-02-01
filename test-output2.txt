@@ -75,7 +75,7 @@ FAIL shows the title of added tasks
 #    file: test.js:216
 #    code: test.assertTextExists(tasks[0].title, 'shows the title of added tasks');
 #    subject: false
-#    text: "Tutakafo ir iw miz advupwu da puil laknek ane fiokca licaw uskoco fohe uta."
+#    text: "Edu timbad milavwi low agu begjulo pugepnug kifewab cicuvme debobaj wallajruz utiudu attu po."
 PASS shows none of the tasks are complete initially
 FAIL shows one of the tasks is complete after toggle
 #    type: assertElementCount
@@ -213,7 +213,7 @@ FAIL there are no tasks for user[2] now
 #    selector: ".tasks-list-item"
 #    expected: 0
 #    obtained: 3
-FAIL 45 tests executed in 21.129s, 24 passed, 21 failed, 0 dubious, 0 skipped.
+FAIL 45 tests executed in 21.631s, 24 passed, 21 failed, 0 dubious, 0 skipped.
 
 Details for the 21 failed tests:
 
