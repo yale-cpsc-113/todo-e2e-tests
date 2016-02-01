@@ -8,7 +8,7 @@
 
 // CONFIGURATION ---------------
 var base_url = casper.cli.options.base_url;
-var logoutUrl = base_url + '/user/logout';
+var logoutSelector = '.logout,a[href="/user/logout"]';
 var taskSelector = '.tasks-list-item';
 var taskListSelector = '.tasks-list';
 var errors = {
@@ -139,7 +139,7 @@ casper.test.begin('The login system', 11, function suite(test) {
       casper.then(function(){
         test.assertElementCount('.validation-error', 1, 'raises an error when user registers with ' + user.description);
       });
-      casper.thenOpen(logoutUrl);
+      casper.thenClick(logoutSelector);
     }(user));
   }
 
@@ -150,7 +150,7 @@ casper.test.begin('The login system', 11, function suite(test) {
   });
 
   // Logout and see that we go back to the home page
-  casper.thenOpen(logoutUrl, function(){
+  casper.thenClick(logoutSelector, function(){
     test.assertUrlMatch(base_url, 'redirects to home page after logout');
   });
 
@@ -168,13 +168,13 @@ casper.test.begin('The login system', 11, function suite(test) {
 
   // Register the next user and then immediately log out
   casper.thenOpen(base_url, makeRegisterCallback(users[1]));
-  casper.thenOpen(logoutUrl);
+  casper.thenClick(logoutSelector);
 
   // Register the next user
   casper.thenOpen(base_url, makeRegisterCallback(users[2]));
 
   // Logout
-  casper.thenOpen(logoutUrl);
+  casper.thenClick(logoutSelector);
 
   casper.run(function() {
     test.done();
@@ -236,7 +236,7 @@ casper.test.begin('The task dashboard', 16, function suite(test) {
   });
 
   // Logout
-  casper.thenOpen(logoutUrl);
+  casper.thenClick(logoutSelector);
 
   casper.run(function() {
     test.done();
@@ -259,7 +259,7 @@ casper.test.begin('Task sharing', 12, function suite(test) {
   });
 
   // Logout
-  casper.thenOpen(logoutUrl);
+  casper.thenClick(logoutSelector);
 
   // Log in user[1]
   casper.thenOpen(base_url, makeLoginCallback(users[1]));
@@ -272,7 +272,7 @@ casper.test.begin('Task sharing', 12, function suite(test) {
   casper.thenClick(taskSelector + ' .toggle-task', function(){
     test.assertElementCount('.complete-task', 1, 'one is shown as complete after toggle');
   });
-  casper.thenOpen(logoutUrl);
+  casper.thenClick(logoutSelector);
 
   // Log in user[2]
   casper.thenOpen(base_url, makeLoginCallback(users[2]));
@@ -280,7 +280,7 @@ casper.test.begin('Task sharing', 12, function suite(test) {
     test.assertElementCount(taskSelector, 1, "there is 1 task for user[2]");
     test.assertElementCount(taskSelector + ' .delete-task', 0, "none can be deleted by user[2]");
   });
-  casper.thenOpen(logoutUrl);
+  casper.thenClick(logoutSelector);
 
   // Log in user[0] again
   casper.thenOpen(base_url, makeLoginCallback(users[0]));
@@ -296,14 +296,14 @@ casper.test.begin('Task sharing', 12, function suite(test) {
   casper.then(function(){
     test.assertElementCount(taskSelector, 0, "there are none for user[0] after deletion");
   });
-  casper.thenOpen(logoutUrl);
+  casper.thenClick(logoutSelector);
 
   // Log in user[2]
   casper.thenOpen(base_url, makeLoginCallback(users[2]));
   casper.then(function(){
     test.assertElementCount(taskSelector, 0, "there are no tasks for user[2] now");
   });
-  casper.thenOpen(logoutUrl);
+  casper.thenClick(logoutSelector);
 
   casper.run(function() {
     test.done();
