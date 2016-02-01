@@ -1,0 +1,284 @@
+Test file: test.js
+# The landing page
+PASS has the right title
+PASS shows a login form
+PASS shows a registration form form
+PASS does not show a task list on login page
+PASS does not show invalid email error
+PASS does not show duplicate email error
+PASS does not show invalid email error
+# The login system
+PASS prevents login of unrecognized user
+PASS raises an error when user registers with name too short
+PASS raises an error when user registers with name too long
+PASS raises an error when user registers with email too short
+PASS raises an error when user registers with email too long
+PASS raises an error when user registers with password too short
+PASS raises an error when user registers with password too long
+PASS welcomes users by name after registration
+PASS redirects to home page after logout
+FAIL denies registration if email already exists
+#    type: assertTextExists
+#    file: test.js:164
+#    code: test.assertTextExists(errors.duplicateEmail, 'denies registration if email already exists');
+#    subject: false
+#    text: "Account with this email already exists!"
+FAIL Errors encountered while filling form: form not found
+#    type: uncaughtError
+#    file: test.js:802
+#    error: Errors encountered while filling form: form not found
+#           CasperError: Errors encountered while filling form: form not found
+#               at fillForm (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:802)
+#               at fillNames (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:862)
+#               at test.js:58
+#               at runStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:1553)
+#               at checkStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:399)
+#    stack: not provided
+FAIL denies login with a bad password
+#    type: assertTextExists
+#    file: test.js:170
+#    code: test.assertTextExists(errors.invalidPassword, 'denies login with a bad password');
+#    subject: false
+#    text: "Invalid password"
+# The task dashboard
+FAIL Errors encountered while filling form: form not found
+#    type: uncaughtError
+#    file: test.js:802
+#    error: Errors encountered while filling form: form not found
+#           CasperError: Errors encountered while filling form: form not found
+#               at fillForm (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:802)
+#               at fillNames (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:862)
+#               at test.js:58
+#               at runStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:1553)
+#               at checkStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:399)
+#    stack: not provided
+PASS has no tasks initially
+PASS has a task creation form for logged in users
+FAIL there are exactly 1 task(s) now
+#    type: assertElementCount
+#    file: test.js:104
+#    code: test.assertElementCount(taskSelector, taskCount, "there are exactly " + taskCount + " task(s) now");
+#    subject: false
+#    selector: ".tasks-list-item"
+#    expected: 1
+#    obtained: 0
+FAIL there are exactly 2 task(s) now
+#    type: assertElementCount
+#    file: test.js:104
+#    code: test.assertElementCount(taskSelector, taskCount, "there are exactly " + taskCount + " task(s) now");
+#    subject: false
+#    selector: ".tasks-list-item"
+#    expected: 2
+#    obtained: 1
+FAIL shows the title of added tasks
+#    type: assertTextExists
+#    file: test.js:216
+#    code: test.assertTextExists(tasks[0].title, 'shows the title of added tasks');
+#    subject: false
+#    text: "Tutakafo ir iw miz advupwu da puil laknek ane fiokca licaw uskoco fohe uta."
+PASS shows none of the tasks are complete initially
+FAIL shows one of the tasks is complete after toggle
+#    type: assertElementCount
+#    file: test.js:226
+#    code: test.assertElementCount('.complete-task', 1, 'shows one of the tasks is complete after toggle');
+#    subject: false
+#    selector: ".complete-task"
+#    expected: 1
+#    obtained: 0
+FAIL Cannot dispatch mousedown event on nonexistent selector: .complete-task .toggle-task
+#    type: uncaughtError
+#    file: test.js:1355
+#    error: Cannot dispatch mousedown event on nonexistent selector: .complete-task .toggle-task
+#           CasperError: Cannot dispatch mousedown event on nonexistent selector: .complete-task .toggle-task
+#               at mouseEvent (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:1355)
+#               at click (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:462)
+#               at _step (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:1793)
+#               at runStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:1553)
+#               at checkStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:399)
+#    stack: not provided
+PASS shows none of the tasks is complete after re-toggle
+PASS shows only one left after deletion
+FAIL shows none left after another deletion
+#    type: assertElementCount
+#    file: test.js:239
+#    code: test.assertElementCount(taskSelector, 0, 'shows none left after another deletion');
+#    subject: false
+#    selector: ".tasks-list-item"
+#    expected: 0
+#    obtained: 1
+# Task sharing
+FAIL Errors encountered while filling form: form not found
+#    type: uncaughtError
+#    file: test.js:802
+#    error: Errors encountered while filling form: form not found
+#           CasperError: Errors encountered while filling form: form not found
+#               at fillForm (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:802)
+#               at fillNames (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:862)
+#               at test.js:58
+#               at runStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:1553)
+#               at checkStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:399)
+#    stack: not provided
+PASS there are 3 tasks for user[0]
+PASS each has ability to delete
+FAIL Errors encountered while filling form: form not found
+#    type: uncaughtError
+#    file: test.js:802
+#    error: Errors encountered while filling form: form not found
+#           CasperError: Errors encountered while filling form: form not found
+#               at fillForm (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:802)
+#               at fillNames (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:862)
+#               at test.js:58
+#               at runStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:1553)
+#               at checkStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:399)
+#    stack: not provided
+FAIL there are 2 tasks for user[1]
+#    type: assertElementCount
+#    file: test.js:271
+#    code: test.assertElementCount(taskSelector, 2, "there are 2 tasks for user[1]");
+#    subject: false
+#    selector: ".tasks-list-item"
+#    expected: 2
+#    obtained: 3
+FAIL one is shown as complete after toggle
+#    type: assertElementCount
+#    file: test.js:277
+#    code: test.assertElementCount('.complete-task', 1, 'one is shown as complete after toggle');
+#    subject: false
+#    selector: ".complete-task"
+#    expected: 1
+#    obtained: 0
+FAIL Errors encountered while filling form: form not found
+#    type: uncaughtError
+#    file: test.js:802
+#    error: Errors encountered while filling form: form not found
+#           CasperError: Errors encountered while filling form: form not found
+#               at fillForm (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:802)
+#               at fillNames (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:862)
+#               at test.js:58
+#               at runStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:1553)
+#               at checkStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:399)
+#    stack: not provided
+FAIL there is 1 task for user[2]
+#    type: assertElementCount
+#    file: test.js:284
+#    code: test.assertElementCount(taskSelector, 1, "there is 1 task for user[2]");
+#    subject: false
+#    selector: ".tasks-list-item"
+#    expected: 1
+#    obtained: 3
+FAIL Errors encountered while filling form: form not found
+#    type: uncaughtError
+#    file: test.js:802
+#    error: Errors encountered while filling form: form not found
+#           CasperError: Errors encountered while filling form: form not found
+#               at fillForm (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:802)
+#               at fillNames (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:862)
+#               at test.js:58
+#               at runStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:1553)
+#               at checkStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:399)
+#    stack: not provided
+PASS there are 3 tasks for user[0] still
+FAIL one is shown as complete
+#    type: assertElementCount
+#    file: test.js:293
+#    code: test.assertElementCount(taskSelector + '.complete-task', 1, 'one is shown as complete');
+#    subject: false
+#    selector: ".tasks-list-item.complete-task"
+#    expected: 1
+#    obtained: 0
+FAIL there are none for user[0] after deletion
+#    type: assertElementCount
+#    file: test.js:301
+#    code: test.assertElementCount(taskSelector, 0, "there are none for user[0] after deletion");
+#    subject: false
+#    selector: ".tasks-list-item"
+#    expected: 0
+#    obtained: 3
+FAIL Errors encountered while filling form: form not found
+#    type: uncaughtError
+#    file: test.js:802
+#    error: Errors encountered while filling form: form not found
+#           CasperError: Errors encountered while filling form: form not found
+#               at fillForm (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:802)
+#               at fillNames (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:862)
+#               at test.js:58
+#               at runStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:1553)
+#               at checkStep (/home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/modules/casper.js:399)
+#    stack: not provided
+FAIL there are no tasks for user[2] now
+#    type: assertElementCount
+#    file: test.js:308
+#    code: test.assertElementCount(taskSelector, 0, "there are no tasks for user[2] now");
+#    subject: false
+#    selector: ".tasks-list-item"
+#    expected: 0
+#    obtained: 3
+FAIL 45 tests executed in 21.129s, 24 passed, 21 failed, 0 dubious, 0 skipped.
+
+Details for the 21 failed tests:
+
+In test.js:164
+  The login system
+    assertTextExists: denies registration if email already exists
+In test.js:802
+  The login system
+    uncaughtError: Errors encountered while filling form: form not found
+In test.js:170
+  The login system
+    assertTextExists: denies login with a bad password
+In test.js:802
+  The task dashboard
+    uncaughtError: Errors encountered while filling form: form not found
+In test.js:104
+  The task dashboard
+    assertElementCount: there are exactly 1 task(s) now
+In test.js:104
+  The task dashboard
+    assertElementCount: there are exactly 2 task(s) now
+In test.js:216
+  The task dashboard
+    assertTextExists: shows the title of added tasks
+In test.js:226
+  The task dashboard
+    assertElementCount: shows one of the tasks is complete after toggle
+In test.js:1355
+  The task dashboard
+    uncaughtError: Cannot dispatch mousedown event on nonexistent selector: .complete-task .toggle-task
+In test.js:239
+  The task dashboard
+    assertElementCount: shows none left after another deletion
+In test.js:802
+  Task sharing
+    uncaughtError: Errors encountered while filling form: form not found
+In test.js:802
+  Task sharing
+    uncaughtError: Errors encountered while filling form: form not found
+In test.js:271
+  Task sharing
+    assertElementCount: there are 2 tasks for user[1]
+In test.js:277
+  Task sharing
+    assertElementCount: one is shown as complete after toggle
+In test.js:802
+  Task sharing
+    uncaughtError: Errors encountered while filling form: form not found
+In test.js:284
+  Task sharing
+    assertElementCount: there is 1 task for user[2]
+In test.js:802
+  Task sharing
+    uncaughtError: Errors encountered while filling form: form not found
+In test.js:293
+  Task sharing
+    assertElementCount: one is shown as complete
+In test.js:301
+  Task sharing
+    assertElementCount: there are none for user[0] after deletion
+In test.js:802
+  Task sharing
+    uncaughtError: Errors encountered while filling form: form not found
+In test.js:308
+  Task sharing
+    assertElementCount: there are no tasks for user[2] now
+Unsafe JavaScript attempt to access frame with URL about:blank from frame with URL file:///home/ubuntu/.nvm/versions/node/v4.2.4/lib/node_modules/casperjs/bin/bootstrap.js. Domains, protocols and ports must match.
+
