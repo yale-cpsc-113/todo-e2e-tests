@@ -16,9 +16,9 @@ var errors = {
   duplicateEmail: 'Account with this email already exists!',
   invalidPassword: 'Invalid password'
 };
-var registerFormSelector = 'form[action="/user/register"]';
-var loginFormSelector = 'form[action="/user/login"]';
-var newTodoFormSelector = 'form[action="/task/create"]';
+var registerFormSelector = 'form.register,form[action="/user/register"]';
+var loginFormSelector = 'form.login,form[action="/user/login"]';
+var newTodoFormSelector = 'form.create-task,form[action="/task/create"]';
 
 var tooLongString = (new Array(52)).join('x');
 
